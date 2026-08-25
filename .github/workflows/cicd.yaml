@@ -1,0 +1,55 @@
+name: Kubertechs CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-deploy:
+    name: Probar, construir y desplegar
+    runs-on: self-hosted
+
+    steps:
+      - name: Descargar código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Ejecutar pruebas
+        run: bash tests/test.sh
+
+      - name: Iniciar sesión en GitHub Container Registry
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io \
+            --username "$GITHUB_ACTOR" \
+            --password-stdin
+
+      - name: Construir imagen Docker
+        run: |
+          docker build \
+            -t ghcr.io/elfanton/kubertechs-cicd:${{ github.sha }} \
+            -t ghcr.io/elfanton/kubertechs-cicd:latest \
+            .
+
+      - name: Publicar imagen Docker
+        run: |
+          docker push ghcr.io/elfanton/kubertechs-cicd:${{ github.sha }}
+          docker push ghcr.io/elfanton/kubertechs-cicd:latest
+
+      - name: Desplegar aplicación en Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+
+          kubectl set image deployment/kubertechs-cicd \
+            kubertechs-cicd=ghcr.io/elfanton/kubertechs-cicd:${{ github.sha }} \
+            -n kubertechs-dev
+
+          kubectl rollout status deployment/kubertechs-cicd \
+            -n kubertechs-dev \
+            --timeout=120s
