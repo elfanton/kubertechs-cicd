@@ -1,46 +1,448 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kubertechs CI/CD</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kubertechs CI/CD | Issues</title>
+  <style>
+    :root {
+      --navy: #243d55;
+      --navy-dark: #072942;
+      --navy-mid: #173d59;
+      --active: #347fa2;
+      --blue: #0788f7;
+      --page: #edf0f2;
+      --panel: #ffffff;
+      --line: #d5d9dd;
+      --muted: #68737d;
+      --text: #17212b;
+    }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .container {
-            text-align: center;
-            background: #1e293b;
-            padding: 50px;
-            border-radius: 15px;
-        }
+    body {
+      margin: 0;
+      min-width: 920px;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text);
+      background: var(--page);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 13px;
+    }
 
-        h1 {
-            color: #38bdf8;
-        }
+    .app {
+      display: grid;
+      grid-template-columns: 234px 1fr;
+      grid-template-rows: 59px calc(100vh - 59px);
+      min-height: 100vh;
+    }
 
-        .version {
-            color: #22c55e;
-        }
-    </style>
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 15px;
+      color: #fff;
+      background: #294159;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      font-size: 25px;
+      font-weight: 400;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 36px;
+      height: 25px;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 18px;
+      height: 13px;
+      border: 6px solid;
+      border-radius: 14px;
+      transform: rotate(2deg);
+    }
+
+    .brand-mark::before {
+      left: 0;
+      border-color: #83ba37;
+    }
+
+    .brand-mark::after {
+      right: 0;
+      border-color: #3a9bd1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 11px 0 32%;
+      color: #fff;
+      background: var(--navy);
+      box-shadow: 0 2px 5px rgba(0,0,0,.18);
+    }
+
+    .global-search {
+      width: 336px;
+      height: 38px;
+      padding: 0 14px;
+      color: #5c6975;
+      background: #fff;
+      border: 1px solid #cfd5da;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 14px;
+    }
+
+    .avatar {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #7f98a7, #385266);
+      border: 2px solid rgba(255,255,255,.35);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sidebar {
+      grid-row: 2;
+      overflow: hidden;
+      color: #edf5fa;
+      background: linear-gradient(180deg, #284b67 0%, #123a57 53%, #062941 100%);
+    }
+
+    .menu {
+      margin: 17px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      height: 36px;
+      padding: 0 19px 0 16px;
+      gap: 13px;
+      color: #edf5fa;
+    }
+
+    .menu-item.active {
+      background: linear-gradient(90deg, #397fa0, #347d9f);
+    }
+
+    .menu-icon {
+      width: 20px;
+      color: #fff;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .menu-label {
+      flex: 1;
+    }
+
+    .chevron {
+      font-weight: 800;
+    }
+
+    .main {
+      grid-column: 2;
+      grid-row: 2;
+      overflow: auto;
+      padding: 14px;
+      background: var(--page);
+    }
+
+    .issue-panel {
+      overflow: hidden;
+      min-width: 1010px;
+      background: var(--panel);
+      border: 1px solid #c8cdd1;
+      border-radius: 5px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.22);
+    }
+
+    .panel-toolbar {
+      display: grid;
+      grid-template-columns: 1fr 160px 1fr;
+      align-items: center;
+      height: 59px;
+      padding: 0 12px 0 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      font-size: 14px;
+    }
+
+    .panel-search {
+      width: 160px;
+      height: 38px;
+      padding: 0 24px;
+      text-align: left;
+      background: #fff;
+      border: 1px solid #cdd1d5;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-btn {
+      display: grid;
+      width: 39px;
+      height: 38px;
+      place-items: center;
+      color: #15212b;
+      background: #e9edf1;
+      border: 0;
+      border-radius: 7px;
+      font-size: 17px;
+    }
+
+    .action-btn.wide {
+      width: 76px;
+    }
+
+    .separator {
+      width: 1px;
+      height: 27px;
+      margin: 5px 0;
+      background: #8a9298;
+    }
+
+    .table-wrap {
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    th {
+      height: 38px;
+      padding: 0 9px;
+      text-align: left;
+      white-space: nowrap;
+      background: #fafbfc;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-weight: 400;
+    }
+
+    th.filter-on {
+      color: #fff;
+      background: var(--blue);
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .filter {
+      float: right;
+      color: #1e272e;
+      font-size: 14px;
+    }
+
+    .empty-row td {
+      height: 36px;
+      color: var(--muted);
+      text-align: center;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      height: 59px;
+      padding: 0 22px;
+      gap: 18px;
+      background: #fff;
+    }
+
+    .page-controls {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #66717a;
+    }
+
+    .page-number {
+      display: grid;
+      width: 39px;
+      height: 38px;
+      place-items: center;
+      color: #0872ce;
+      background: #d7e9fb;
+    }
+
+    .page-size {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-left: 15px;
+      font-size: 15px;
+    }
+
+    .page-size-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 81px;
+      height: 38px;
+      padding: 0 13px;
+      background: #edf0f3;
+      border-radius: 6px;
+    }
+
+    .no-items {
+      margin-left: auto;
+      font-size: 15px;
+    }
+
+    .pipeline-badge {
+      position: fixed;
+      right: 18px;
+      bottom: 15px;
+      padding: 8px 12px;
+      color: #52606c;
+      background: rgba(255,255,255,.84);
+      border: 1px solid #d7dce0;
+      border-radius: 5px;
+      font-size: 11px;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Kubertechs CI/CD</h1>
+  <div class="app">
+    <header class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Kubertechs</span>
+    </header>
 
-        <p>*Aplicación desplegada con GitHub Actions.*</p>
+    <header class="topbar">
+      <input class="global-search" type="text" placeholder="Search..." aria-label="Buscar">
+      <div class="profile">
+        <span>Leonardo Acosta</span>
+        <span class="avatar">LA</span>
+      </div>
+    </header>
 
-        <p class="version">Versión: 4.0</p>
-    </div>
+    <aside class="sidebar">
+      <ul class="menu">
+        <li class="menu-item active"><span class="menu-icon">●</span><span class="menu-label">Customers</span></li>
+        <li class="menu-item"><span class="menu-icon">▰</span><span class="menu-label">Custodians</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">▣</span><span class="menu-label">Contacts</span></li>
+        <li class="menu-item"><span class="menu-icon">☑</span><span class="menu-label">Interfaces</span></li>
+        <li class="menu-item"><span class="menu-icon">▤</span><span class="menu-label">Accounts</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">✹</span><span class="menu-label">Issues</span></li>
+        <li class="menu-item"><span class="menu-icon">▥</span><span class="menu-label">Products</span></li>
+        <li class="menu-item"><span class="menu-icon">◆</span><span class="menu-label">Projects</span></li>
+        <li class="menu-item"><span class="menu-icon">◉</span><span class="menu-label">Touches</span></li>
+        <li class="menu-item"><span class="menu-icon">▰</span><span class="menu-label">Morning Process</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">◉</span><span class="menu-label">Data Analysis</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">▣</span><span class="menu-label">Dashboards</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">♣</span><span class="menu-label">Users</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">☁</span><span class="menu-label">Others</span><span class="chevron">⌄</span></li>
+        <li class="menu-item"><span class="menu-icon">▲</span><span class="menu-label">Quick Issue</span></li>
+        <li class="menu-item"><span class="menu-icon">«</span><span class="menu-label">Minimize menu</span></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <section class="issue-panel">
+        <div class="panel-toolbar">
+          <span class="panel-title">Issues</span>
+          <input class="panel-search" type="text" placeholder="Search" aria-label="Buscar issues">
+          <div class="actions" aria-label="Herramientas decorativas">
+            <button class="action-btn" type="button">+</button>
+            <button class="action-btn" type="button">▣</button>
+            <button class="action-btn" type="button">▣</button>
+            <span class="separator"></span>
+            <button class="action-btn wide" type="button">▼　⌄</button>
+            <button class="action-btn" type="button">↻</button>
+            <button class="action-btn" type="button">⌘</button>
+            <button class="action-btn wide" type="button">⋮　⌄</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <colgroup>
+              <col style="width:47px">
+              <col style="width:43px">
+              <col style="width:45px">
+              <col style="width:140px">
+              <col style="width:325px">
+              <col style="width:110px">
+              <col style="width:120px">
+              <col style="width:108px">
+              <col style="width:45px">
+              <col style="width:108px">
+              <col style="width:108px">
+              <col style="width:110px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>□</th>
+                <th>Type</th>
+                <th class="filter-on">▼</th>
+                <th>Id <span class="filter">▼</span></th>
+                <th>Title <span class="filter">▼</span></th>
+                <th>Product <span class="filter">▼</span></th>
+                <th>Component <span class="filter">▼</span></th>
+                <th>Assigned</th>
+                <th class="filter-on">▼</th>
+                <th>Status <span class="filter">▼</span></th>
+                <th>Priority <span class="filter">↓ 1　▼</span></th>
+                <th>Date <span class="filter">↑ 2　▼</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row">
+                <td colspan="12">No matching records found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <div class="page-controls">
+            <span>Ⅰ◀</span><span>◀</span><span class="page-number">0</span><span>▶</span><span>▶Ⅰ</span>
+          </div>
+          <div class="page-size">
+            <span class="page-size-box"><span>25</span><span>⌄</span></span>
+            <span>items per page</span>
+          </div>
+          <span class="no-items">No items to display</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="pipeline-badge">Kubertechs CI/CD · Static UI demo</div>
 </body>
 </html>
